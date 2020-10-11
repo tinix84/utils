@@ -3,6 +3,8 @@ This folder includes many experiment related to optimization and power electroni
 
 ## How do I run it?
 use anaconda with python 3.7 and pymoo package
+go in the folder where you clone the files and launch the folder 
+```pip install -e .```
 
 ## Examples
 ### Magnetics
