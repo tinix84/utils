@@ -3,7 +3,7 @@
 [3]: mailto:hello@codecov.io
 [4]: https://github.com/codecov/codecov-bash
 
-[![codecov](https://codecov.io/gh/codecov/example-typescript/branch/master/graph/badge.svg)](https://codecov.io/gh/codecov/example-typescript)
+[![codecov](https://codecov.io/gh/tinix84/utils/branch/main/graph/badge.svg)](https://codecov.io/gh/tinix84/utils)
 [![Build Status](https://travis-ci.org/codecov/example-typescript.svg?branch=master)](https://travis-ci.org/codecov/example-typescript)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcodecov%2Fexample-typescript.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcodecov%2Fexample-typescript?ref=badge_shield)
 
