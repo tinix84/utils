@@ -17,7 +17,7 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pymoo bokeh
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION pymoo bokeh numpy matplotlib
   - conda activate test-environment
   - python setup.py install
 
