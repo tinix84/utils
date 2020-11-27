@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{f690a2cf-0626-44e0-b1d1-c2b1bc23ffcc}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>Zfit.pyw</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Models\#EkosCable.py" />
+    <Compile Include="Models\#EkosCIC.py" />
+    <Compile Include="Models\#EkosCIC2.py" />
+    <Compile Include="Models\#EkosLPF.py" />
+    <Compile Include="Models\#EkosLPF2.py" />
+    <Compile Include="Models\#ModelConvert.py" />
+    <Compile Include="Models\#ModelConvert2.py" />
+    <Compile Include="Models\#ModelConvert3.py" />
+    <Compile Include="Models\#ModelConvert4.py" />
+    <Compile Include="Models\#PolyFitExpt.py" />
+    <Compile Include="Models\#test.py" />
+    <Compile Include="Models\%28csr%29p%28lsr%29.py" />
+    <Compile Include="Models\%28rpl%29s%28rpl%29.py" />
+    <Compile Include="Models\%28rplp%28csr%29%29sl.py" />
+    <Compile Include="Models\CoupledFilter.py" />
+    <Compile Include="Models\cp%28lsr%29.py" />
+    <Compile Include="Models\cpl_skin.py" />
+    <Compile Include="Models\cpr.py" />
+    <Compile Include="Models\csr.py" />
+    <Compile Include="Models\csrsl.py" />
+    <Compile Include="Models\lp%28cs%28cpr%29%29.py" />
+    <Compile Include="Models\ls%28cpr%29.py" />
+    <Compile Include="Models\lsr.py" />
+    <Compile Include="Models\lsrs%28cpr%29.py" />
+    <Compile Include="Models\lsr_skin.py" />
+    <Compile Include="Models\l_skin.py" />
+    <Compile Include="Models\l_skin_s%28cpr%29.py" />
+    <Compile Include="Models\MatrixSolnExptModel.py" />
+    <Compile Include="Models\rp%28csl%29.py" />
+    <Compile Include="Models\rp%28cslsr%29.py" />
+    <Compile Include="Models\rp%28csr%29p%28lsr%29.py" />
+    <Compile Include="Models\rp%28lsr%29.py" />
+    <Compile Include="Models\rp%28l_skin%29.py" />
+    <Compile Include="Models\rp%28rsl_skin%29.py" />
+    <Compile Include="Models\rpcp%28lsr%29.py" />
+    <Compile Include="Models\rpcp%28lsr_skin%29.py" />
+    <Compile Include="Models\rpcpl.py" />
+    <Compile Include="Models\rplp%28csr%29.py" />
+    <Compile Include="Models\rs%28c+load%29.py" />
+    <Compile Include="Models\rs%28cpl%29.py" />
+    <Compile Include="Models\rs%28rpcpl%29.py" />
+    <Compile Include="Models\rsls%28cpl%29.py" />
+    <Compile Include="Models\rsls%28rp%28csr%29p%28lsr%29%29.py" />
+    <Compile Include="Models\rsls%28rpcpl%29.py" />
+    <Compile Include="Models\rsls%28rpl%29.py" />
+    <Compile Include="Models\r_wire.py" />
+    <Compile Include="Models\r_wire2.py" />
+    <Compile Include="Models\trans_line1.py" />
+    <Compile Include="Models\trans_line2.py" />
+    <Compile Include="Models\trans_line3.py" />
+    <Compile Include="Models\trans_line4.py" />
+    <Compile Include="Models\xdcr1.py" />
+    <Compile Include="Models\xdcr2.py" />
+    <Compile Include="Models\xfmr1.py" />
+    <Compile Include="Models\xfmr2.py" />
+    <Compile Include="Models\xfmr3.py" />
+    <Compile Include="Models\xfmr4.py" />
+    <Compile Include="mplwidget.py" />
+    <Compile Include="ui_Zfit.py" />
+    <Compile Include="utils.py" />
+    <Compile Include="Zfit.pyw" />
+    <Compile Include="zfit_constants.py" />
+    <Compile Include="zfit_modelcore.py" />
+    <Compile Include="zfit_registry.py" />
+    <Compile Include="zfit_yaxes.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\Data\MatrixSolnExpt.html" />
+    <Content Include="Models\Data\MatrixSolnExpt.png" />
+    <Content Include="requirements.txt" />
+    <Content Include="Zfit Operating Notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models" />
+    <Folder Include="Models\Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{2af0f10d-7135-4994-9156-5d01c9c11b7e}\3.5" />
+  </ItemGroup>
+  <Import Project="$(PtvsTargetsFile)" Condition="Exists($(PtvsTargetsFile))" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="!Exists($(PtvsTargetsFile))" />
+</Project>

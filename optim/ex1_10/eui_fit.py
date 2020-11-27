@@ -3,6 +3,7 @@ from bokeh.io import push_notebook, show, output_notebook
 from bokeh.layouts import row
 
 import numpy as np
+import pandas as pd
 
 from pymoo.algorithms.nsga2 import NSGA2
 from pymoo.model.problem import Problem
@@ -96,8 +97,8 @@ def calc_inductor(x, D):
     # Brt = flux denity at rated current(T)
     # Jrt = current density at rated current(A/m ** 2)
 
-    # N = round(x[0]) # force number of turns to be integer
-    N = x[0]
+    N = round(x[0]) # force number of turns to be integer
+    # N = x[0]
     ds = x[1]
     ws = x[2]
     wc = x[3]
@@ -193,7 +194,7 @@ def print_design(x, D):
         x ([type]): optimization variables x=[N, ds, ws, wc, lc, g]
     """
 
-    N = x[0]
+    N = round(x[0])
     ds = x[1]
     ws = x[2]
     wc = x[3]
@@ -265,19 +266,71 @@ def gte(x, xmn):
 
     return c
 
+def get_design(x, D):
+    des = dict()
+    """Print in the console the design parameters
+
+    Args:
+        x ([type]): optimization variables x=[N, ds, ws, wc, lc, g]
+    """
+
+    des['N'] = N = round(x[0])
+    des['ds'] = ds = x[1]
+    des['ws'] = ws = x[2]
+    des['wc'] = wc = x[3]
+    des['lc'] = lc = x[4]
+    des['g'] = g = x[5]
+
+    # compute mass
+    des['M'] = 2.0*(2.0*wc+ws+ds)*lc*wc*D.rowmc + \
+        (2*lc+2*wc+np.pi*ds)*ds*ws*D.kpf*D.rowwc
+    # compute loss at rated current
+    des['Prt'] = (2*lc+2*wc+np.pi*ds)*(N*D.irt) ** 2/(ds*ws*D.kpf*D.sigmawc)
+    # compute inductance
+    des['L'] = D.mu0*lc*wc*N ** 2/(2*g)
+    # compute the flux density
+    des['Brt'] = D.mu0*N*D.irt/(2*g)
+    # current density
+    des['Jrt'] = N*D.irt/(ws*ds*D.kpf)
+
+    return pd.Series(des)
 
 if __name__ == "__main__":
 
+    from bokeh.models import ColumnDataSource, NumeralTickFormatter, HoverTool
 
     res = eui_modesign()
-    
+
     TOOLS = "hover,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
-    
-    p = figure(tools=TOOLS, plot_width=600, plot_height=450,
+
+    TOOLTIPS = [
+        ("index", "$index"),
+        ('L', "@L"),
+        ('ds', "@ds"),
+        ('ws', "@ws"),
+        ('lc', "@lc"),
+        ('wc', "@wc"),
+        ('B', "@Brt"),
+        ('Nturns', "@N"),
+        ('lgap', "@g")
+    ]
+
+    sol = pd.DataFrame()
+    for v in res.X:
+        row = get_design(v, input_design_parameters())
+        sol = sol.append(row, ignore_index=True)
+
+    source = ColumnDataSource(sol)
+
+    p = figure(tools=TOOLS, tooltips=TOOLTIPS, plot_width=600, plot_height=450,
                title="inductor optimization")
-    p.scatter(x=res.F[:, 0], y=res.F[:, 1])
+
+    p.circle(x='M', y='Prt', size=5, source=source)
+    #p.scatter(x=sol.M, y=sol.Prt)
     p.xaxis.axis_label = 'mass'
     p.yaxis.axis_label = 'losses'
+    # Add the HoverTool to the figure
+    #p.add_tools(HoverTool(tooltips=tooltips))
     show(p)
 
     print_design(res.X[26], input_design_parameters())
