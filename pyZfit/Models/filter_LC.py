@@ -2,7 +2,6 @@
 Model script for output LC filter of buck conveter
 """
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 

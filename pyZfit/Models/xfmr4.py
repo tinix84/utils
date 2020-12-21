@@ -18,8 +18,8 @@ PARAMS = [
     {"name":  "Ls", "init": 500e-6, "vary": True, "min":  1e-6, "max":  None},
     {"name":   "k", "init":     .9, "vary": True, "min":    .5, "max":     1},
     {"name":  "Cp", "init": 10e-12, "vary": True, "min": 1e-12, "max":  None},
-    {"name":  "Rc1", "init":    10e3, "vary": True, "min":  0, "max":  None},
-    {"name":  "Rc2", "init":       10e3, "vary": True, "min":  0, "max":  None},
+    {"name":  "Rc1", "init":    10e3, "vary": True, "min":  1e-12, "max":  None},
+    {"name":  "Rc2", "init":       10e3, "vary": True, "min":  1e-12, "max":  None},
 ]
 
 def model(w, params, **kws):

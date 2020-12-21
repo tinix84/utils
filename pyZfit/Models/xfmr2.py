@@ -16,7 +16,7 @@ j = 1j
 PARAMS = [
     {"name": "Lp", "init": 100e-6, "vary": True, "min":  1e-6, "max":  None},
     {"name": "Ls", "init": 100e-6, "vary": True, "min":  1e-6, "max":  None},
-    {"name":  "k", "init":     .9, "vary": True, "min":     0, "max":     1},
+    {"name":  "k", "init":     .9, "vary": True, "min":  1e-12, "max":     1},
     {"name": "Cp", "init": 10e-12, "vary": True, "min": 1e-12, "max":  None},
     {"name": "Rp", "init":   10e3, "vary": True, "min":   100, "max":  None},
 ]

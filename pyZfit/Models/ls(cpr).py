@@ -11,7 +11,7 @@ j = 1j
 PARAMS = [
     {"name": "Ls", "init":   100e-9, "vary": True, "min": 1e-12, "max":  None},
     {"name": "Cp", "init":    10e-9, "vary": True, "min": 1e-12, "max":  None},
-    {"name": "Rp", "init":      100, "vary": True, "min":     1, "max":  None},
+    {"name": "Rp", "init":      100, "vary": True, "min": 1e-12, "max":  None},
 ]
 
 def model(w, params, **kwargs):

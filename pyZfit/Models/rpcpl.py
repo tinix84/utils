@@ -14,7 +14,7 @@ PARAMS = [
     {"name": "L", "init":   150e-6, "vary": True, "min": 1e-12, "max": None},
 ]
 
-def model(w, params, **kws):
+def model(w, params, **kwargs):
     """
     Calculate impedance using equations here for all frequencies w.
     :param w: radian frequency array

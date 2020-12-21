@@ -1,7 +1,7 @@
 import numpy as np
 from importlib import import_module, reload
 
-from lmfit import minimize, Parameters
+from lmfit import minimize, Parameters, Minimizer, report_fit
 from scipy.stats import gmean   # geometric mean
 # import csv
 # import pandas as pd
@@ -18,15 +18,29 @@ PARAM_FILE = "params.csv"
 # (Dogleg and Newton CG are not included since they require a Jacobian
 # to be supplied)
 METHODS = [
-    ("Levenberg-Marquardt",         "leastsq"),
-    ("Nelder-Mead",                 "nelder"),
-    ("L-BFGS-B",                    "lbfgsb"),
-    ("Powell",                      "powell"),
-    ("Conjugate Gradient",          "cg"),
-    ("COBYLA",                      "cobyla"),
-    ("Truncated Newton",            "tnc"),
-    ("Sequential Linear Squares",   "slsqp"),
-    ("Differential Evolution",      "differential_evolution")
+    ("Levenberg-Marquardt", "leastsq"),
+    ("Least-Squares minimization, using Trust Region Reflective method", "least_squares"),
+    ("differential evolution", "differential_evolution"),
+    ("brute force method", "brute"),
+    ("basinhopping", "basinhopping"),
+    ("Adaptive Memory Programming for Global Optimization", "ampgo"),
+    ("Nelder-Mead", "nelder"),
+    ("L-BFGS-B", "lbfgsb"),
+    ("Powell", "powell"),
+    ("Conjugate-Gradient", "cg"),
+    ("Newton-CG", "newton"),
+    ("Cobyla", "cobyla"),
+    ("BFGS", "bfgs"),
+    ("Truncated Newton", "tnc"),
+    ("Newton-CG trust-region", "trust-ncg"),
+    ("nearly exact trust-region", "trust-exact"),
+    ("Newton GLTR trust-region", "trust-krylov"),
+    ("trust-region for constrained optimization", "trust-constr"),
+    ("Dog-leg trust-region", "dogleg"),
+    ("Sequential Linear Squares Programming", "slsqp"),
+    ("Maximum likelihood via Monte-Carlo Markov Chain", "emcee"),
+    ("Simplicial Homology Global Optimization", "shgo"),
+    ("Dual Annealing optimization", "dual_annealing")
 ]
 # Define one or the other:
 LIMITS = "lmfit"
@@ -39,7 +53,7 @@ class DoModel:
     program and to perform the actual modeling.
     """
 
-    def __init__(self, cli=False):
+    def __init__(self):
         self.amw = None
         self.ya = None
         self.ya_list = None
@@ -48,10 +62,11 @@ class DoModel:
         self.print_results = None
         self.draw_formatted = None
         self.exc_handler = None
+        self.model = None
 
     # Local fitting functions ============================
 
-    def _fcn2min(self, params, w, Z, weight, log_mag=False, **kwargs):
+    def _fcn2min(self, params, w, Z, weight, log_mag=True, **kwargs):
         """
         This is the function to minimize.  It is the difference between model
         and target (aka residuals) with modeling and penalty weights applied.
@@ -63,8 +78,7 @@ class DoModel:
         :return: must return array for leastsq method, optional for others.
         """
         if log_mag:
-            diff = np.log10(
-                Z) - np.log10(self.model.model(w, params, **kwargs))
+            diff = np.log10(Z) - np.log10(self.model.model(w, params, **kwargs))
         else:
             diff = Z - self.model.model(w, params, **kwargs)
         diff *= weight
@@ -298,7 +312,8 @@ class DoModel:
         # Perform weighted model optimization.
         # Errors will be caught and displayed by zfit_excepthook() in main window.
         kw_args = {"load": load, "fsf": fsf, "zsf": zsf}
-        result = minimize(self._fcn2min, params, args=(w, z, weight), kws=kw_args, method=method)
+        result = minimize(self._fcn2min, params, args=(
+            w, z, weight), kws=kw_args, method=method)
 
         # Don't use params class after minimize -- some values are scrambled or changed.
 
@@ -356,6 +371,7 @@ class DoModel:
             status = "Process aborted"
 
         print(status)
+        report_fit(result)
 
 
 class Range:

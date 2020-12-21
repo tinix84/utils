@@ -9,10 +9,10 @@ j = 1j
 # List of parameter dictionaries with names, initial values,
 # and min/max bounds. Set 'vary': False to hold a param constant.
 PARAMS = [
-    {"name": "Rs", "init":     1.00, "vary": True, "min":  10.0e-3, "max":     5.00},
-    {"name":  "C", "init": 10.0e-12, "vary": True, "min":      0.0, "max":  1.00e12},
-    {"name":  "L", "init":   150e-6, "vary": True, "min":      0.0, "max":  1.00e12},
-    {"name": "Rp", "init":   1.00e3, "vary": True, "min":      0.0, "max":  1.00e12},
+    {"name": "Rs", "init":     1.00, "vary": True, "min": 1e-12, "max":  1.00e12},
+    {"name":  "C", "init": 10.0e-12, "vary": True, "min": 1e-12, "max":  1.00},
+    {"name":  "L", "init":   150e-6, "vary": True, "min": 1e-12, "max":  1.00},
+    {"name": "Rp", "init":   1.00e3, "vary": True, "min": 1e-12, "max":  1.00e12},
 ]
 
 def model(w, params, **kws):
