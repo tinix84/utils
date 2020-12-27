@@ -77,60 +77,61 @@ class DoModel:
         :param **kwargs: keyword arguments
         :return: must return array for leastsq method, optional for others.
         """
+        Zmodel = self.model.model(w, params, **kwargs)
         if log_mag:
-            diff = np.log10(Z) - np.log10(self.model.model(w, params, **kwargs))
+            diff = np.log10(Z) - np.log10(Zmodel)
         else:
-            diff = Z - self.model.model(w, params, **kwargs)
+            diff = Z - Zmodel
         diff *= weight
         # Flatten complex impedance into re/im adjacent floats
         residuals = diff.view('double')
-        if LIMITS == "zfit":
-            # Get mean-square float of entire difference array for weight scaling
-            mean_sq = (residuals**2).mean()
-            # Append penalties to residuals
-            bounded = np.hstack(
-                (residuals, self._bound_penalties(params, mean_sq)))
-            return bounded
-        else:
-            return residuals
+        # if LIMITS == "zfit":
+        #     # Get mean-square float of entire difference array for weight scaling
+        #     mean_sq = (residuals**2).mean()
+        #     # Append penalties to residuals
+        #     bounded = np.hstack(
+        #         (residuals, self._bound_penalties(params, mean_sq)))
+        #     return bounded
+        # else:
+        return residuals
 
-    def _bound_penalties(self, params, weight):
-        """
-        This function is only used when zfit_constants.LIMITS == 'zfit'.
-        Return a list of numbers each of which increases rapidly when the min or max for
-        a param is approached.  This represents boundary penalties as a parameter goes
-        out of bounds.
-        :param params:
-        :param weight:
-        :return: a list of N elements where N is the total number of min or max bounds
-        in the set of params.  Each element is a number which increases rapidly when
-        the min or max bound is approached.  Append penalty elements if params are out of bounds.
-         """
-        penalties = []
-        # Custom limiting is done here:
-        # This is an exponent which controls the abruptness of penalty increase as
-        # a min or max limit is approached:
-        PENALTY_WALL = 6
-        full_penalty = 1e4 * weight
-        for p in self.model.PARAMS:
-            name = p['name']
-            val = params[name].value
-            # max and min must be >0 or None.
-            # Use min/max limits from model.PARAMS here and set them to None
-            # for lmfit (except for diff evo method).
-            if p['max'] == None:
-                max_pen = 0
-            else:
-                max_pen = full_penalty if val >= p['max'] else \
-                    full_penalty * np.power(val/p['max'], PENALTY_WALL)
-            if p['min'] == None:
-                min_pen = 0
-            else:
-                min_pen = full_penalty if val <= p['min'] else \
-                    full_penalty * np.power(p['min']/val, PENALTY_WALL)
-            penalty = np.maximum(np.abs(max_pen), np.abs(min_pen))
-            penalties.append(penalty)
-        return penalties
+    # def _bound_penalties(self, params, weight):
+    #     """
+    #     This function is only used when zfit_constants.LIMITS == 'zfit'.
+    #     Return a list of numbers each of which increases rapidly when the min or max for
+    #     a param is approached.  This represents boundary penalties as a parameter goes
+    #     out of bounds.
+    #     :param params:
+    #     :param weight:
+    #     :return: a list of N elements where N is the total number of min or max bounds
+    #     in the set of params.  Each element is a number which increases rapidly when
+    #     the min or max bound is approached.  Append penalty elements if params are out of bounds.
+    #      """
+    #     penalties = []
+    #     # Custom limiting is done here:
+    #     # This is an exponent which controls the abruptness of penalty increase as
+    #     # a min or max limit is approached:
+    #     PENALTY_WALL = 6
+    #     full_penalty = 1e4 * weight
+    #     for p in self.model.PARAMS:
+    #         name = p['name']
+    #         val = params[name].value
+    #         # max and min must be >0 or None.
+    #         # Use min/max limits from model.PARAMS here and set them to None
+    #         # for lmfit (except for diff evo method).
+    #         if p['max'] == None:
+    #             max_pen = 0
+    #         else:
+    #             max_pen = full_penalty if val >= p['max'] else \
+    #                 full_penalty * np.power(val/p['max'], PENALTY_WALL)
+    #         if p['min'] == None:
+    #             min_pen = 0
+    #         else:
+    #             min_pen = full_penalty if val <= p['min'] else \
+    #                 full_penalty * np.power(p['min']/val, PENALTY_WALL)
+    #         penalty = np.maximum(np.abs(max_pen), np.abs(min_pen))
+    #         penalties.append(penalty)
+    #     return penalties
 
     def _min_max_set(self, min_max, method, scaled_val):
         """
@@ -144,9 +145,9 @@ class DoModel:
         if method == "differential_evolution":
             # Diff Evo requires finite min & max values
             return scaled_val if min_max == None else min_max
-        elif LIMITS == "zfit":
-            # lmfit doesn't do the limiting
-            return None
+        # elif LIMITS == "zfit":
+        #     # lmfit doesn't do the limiting
+        #     return None
         elif LIMITS == "lmfit":
             # lmfit gets spec'd limit
             return min_max
@@ -249,7 +250,7 @@ class DoModel:
         mag = np.array(ya.inputData[M])
         phase = np.array(np.radians(ya.inputData[P]))
         freq = np.array(range.xa["Hz"])
-        load = np.array(range.load_array)
+        load = None #np.array(range.load_array)
 
         # Radian frequency
         w = 2*np.pi*freq
@@ -265,16 +266,16 @@ class DoModel:
         # Instantiate clean class for lmfit fitter
         params = Parameters()
         params.clear()
+        # Do actual modeling.
+        # Make working copy of PARAMS list from model
+        param_list = list(self.model.PARAMS)
 
         # Init list of name/value tuples
         values = []
 
         # Get selected fitting method
-        method = METHODS[method_nr][1]
+        method = "leastsq" # METHODS[method_nr][1]
 
-        # Do actual modeling.
-        # Make working copy of PARAMS list from model
-        param_list = list(self.model.PARAMS)
 
         # Adjust min and max if necessary
         for phase in param_list:
@@ -405,4 +406,23 @@ class YAxes:
 
 
 if __name__ == "__main__":
-    pass
+    import pandas as pd
+    from zfit_plot import LogLogPlotDualAxisPlotly
+
+    filename_chokes_webinar = r"./TestDataFiles/Inductors_2020-07-27T09_29_28.xlsx"
+    df_chokes = pd.read_excel(io=filename_chokes_webinar)
+    df_chokes.columns
+    f = df_chokes['Frequency (Hz)']
+    Zabs_flatwire = df_chokes['FlatBandWire: Trace 1: Magnitude (Ω)']
+    Zdeg_flatwire = df_chokes['FlatBandWire: Trace 2: Phase (°)']
+    Z_flatwire = Zabs_flatwire * np.exp(1j * Zdeg_flatwire * np.pi / 180)
+    
+    range = Range()
+    range.xa['Hz'] = f
+    ya = YAxes(0)
+    ya.inputData[0] = Zabs_flatwire
+    ya.inputData[1] = Zdeg_flatwire
+
+    my_model = DoModel()
+    fit_model = import_module("Models." + "rpcpl")
+    my_model.do_model_cli(range=range, ya=ya, model=fit_model)
